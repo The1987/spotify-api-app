@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+
+    <style>
+        p {
+            line-height: 1.8;
+        }
+
+        #success-write,
+        #error-write {
+            display: none;
+        }
+
+        button {
+            width: 225px;
+        }
+    </style>
+</head>
+
+<body>
+    <section class="section">
+        <div class="container">
+            <nav class="navbar" role="navigation" aria-label="main navigation">
+                <div class="navbar-brand">
+                    <!-- <a class="navbar-item" href="https://bulma.io">
+                        <img src="https://bulma.io/images/bulma-logo.png" width="112" height="28">
+                    </a> -->
+
+                    <!-- <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false"
+                        data-target="navbarBasicExample">
+                        <span aria-hidden="true"></span>
+                        <span aria-hidden="true"></span>
+                        <span aria-hidden="true"></span>
+                    </a> -->
+                </div>
+
+                <div id="navbarBasicExample" class="navbar-menu">
+                    <div class="navbar-start">
+                        <a class="navbar-item" href="/">
+                            Home
+                        </a>
+
+                        <a class="navbar-item" href="/about">
+                            About
+                        </a>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </section>
+    <section class="section">
+        <div class="container">
+            <h1 class="title">
+                Spotify API App
+            </h1>
+            <p class="content">
+                A simple node.js app that writes and reads from Spotify REST-API, storing metadata of music tracks to a
+                Relational Database, fetching the
+                metadata from the external Spotify REST API.
+            </p>
+        </div>
+    </section>
+    <section class="section">
+        <div class="container">
+            <h2 class="title is-4">
+                Write from Spotify API
+            </h2>
+            <p class="content">
+                Add in an ISRC below to create a track then click Add Track. This will query the Spotify API and then it
+                will save to a database.
+                <br>
+                ISRC examples include: USVT10300001, USEE10001992,
+                GBAYE0601498, USWB11403680, GBAYE0601477
+            </p>
+            <div class="field is-grouped">
+                <p class="control has-icons-left has-icons-right">
+                    <input id="isrc-id" class="input" type="text" placeholder="Enter ISRC Number">
+                    <span class="icon is-small is-left">
+                        <i class="fas fa-envelope"></i>
+                    </span>
+                    <span class="icon is-small is-right">
+                        <i class="fas fa-check"></i>
+                    </span>
+                </p>
+                <p class="control">
+                    <button id="add-track-id" class="button is-success">
+                        Add Track
+                    </button>
+                </p>
+            </div>
+            <div id="success-write" class="notification is-success is-light">
+                <div class="content">
+                    <strong>Success</strong>
+                    <div id="success-write-response"></div>
+                </div>
+            </div>
+            <div id="error-write" class="notification is-danger is-light">
+                <span>
+                    <strong>Error: </strong>
+                </span>
+                <span> unable to find this ISRC. Please try again.</span>
+            </div>
+        </div>
+    </section>
+    <section class="section">
+        <div class="container">
+            <h2 class="title is-4">
+                Read from Database
+            </h2>
+            <p class="content">
+                Search for records in the database. Exact match only. <br><span class="has-text-danger">Note: Search Results will appear in the console.</span>
+            </p>
+            <div class="field is-grouped">
+                <p class="control has-icons-left has-icons-right">
+                    <input id="search-isrc-id" class="input" type="text" placeholder="Enter ISRC Number">
+                    <span class="icon is-small is-left">
+                        <i class="fas fa-envelope"></i>
+                    </span>
+                    <span class="icon is-small is-right">
+                        <i class="fas fa-check"></i>
+                    </span>
+                </p>
+                <p class="control">
+                    <button id="search-isrc-track-id" class="button is-success">
+                        Search by ISRC
+                    </button>
+                </p>
+            </div>
+            <div class="field is-grouped">
+                <p class="control has-icons-left has-icons-right">
+                    <input id="search-artist-id" class="input" type="text" placeholder="Enter Artist Name">
+                    <span class="icon is-small is-left">
+                        <i class="fas fa-envelope"></i>
+                    </span>
+                    <span class="icon is-small is-right">
+                        <i class="fas fa-check"></i>
+                    </span>
+                </p>
+                <p class="control">
+                    <button id="search-artist-track-id" class="button is-success">
+                        Search by Artist Name
+                    </button>
+                </p>
+            </div>
+        </div>
+    </section>
+    <script>
+        window.addEventListener("load", (event) => {
+            console.log("page is fully loaded");
+        });
+
+        const addTrackBtn = document.getElementById("add-track-id");
+        const isrcQuery = document.getElementById("isrc-id");
+        const success_write_response = document.getElementById("success-write-response");
+
+        addTrackBtn.addEventListener('click', (event) => {
+            console.log("addTrack function running...", isrcQuery.value);
+            let isrc = isrcQuery.value;
+            const url = "/api/get/track?isrc=" + isrc
+            fetch(url)
+                .then((response) => {
+                    return response.json();
+                })
+                .then((data) => {
+                    console.log("Returned : ", data.status)
+
+                    if (data.status === 'error') {
+                        document.getElementById("error-write").style.display = "flex";
+                        document.getElementById("success-write").style.display = "none";
+                    }
+                    else {
+                        document.getElementById("error-write").style.display = "none";
+                        document.getElementById("success-write").style.display = "flex";
+
+                        console.log("data: ", data)
+
+                        success_write_response.innerHTML = `<ul><li>Artist: ${data.artist}</li><li>ISRC: ${data.isrc}</li><li>Album Name: ${data.album_name}</li><li>Image Url: ${data.image_url}</li><li>Popularity: ${data.popularity}</li></ul>`
+
+                        // Show the data from ISRC //
+                        // Add message, added to DB //
+                    }
+                })
+        })
+
+        const searchIsrcBtn = document.getElementById("search-isrc-track-id");
+        const searcgIsrcQuery = document.getElementById("search-isrc-id");
+
+        searchIsrcBtn.addEventListener('click', (event) => {
+
+            console.log("searchIsrcBtn running...", searcgIsrcQuery.value);
+
+            let isrc = searcgIsrcQuery.value;
+            const url = "/api/search/track/isrc?isrc=" + isrc
+            console.log("isrc: ", isrc)
+
+            fetch(url)
+                .then((response) => {
+                    return response.json();
+                })
+                .then((data) => {
+
+                    if (data.status === 'warning') {
+                        // No results then show a no results found //
+                        console.log("Warning. No results for this ISRC search.")
+                        // document.getElementById("error-write").style.display = "flex";
+                        // document.getElementById("success-write").style.display = "none";
+                    }
+                    else {
+                        console.log("Success : ISRC Search Results:", data);
+                    }
+                })
+
+        })
+
+        const searchArtistBtn = document.getElementById("search-artist-track-id");
+        const searchArtistQuery = document.getElementById("search-artist-id");
+
+        searchArtistBtn.addEventListener('click', (event) => {
+
+            console.log("searchArtistcBtn running...", searchArtistQuery.value);
+
+            let artist = searchArtistQuery.value;
+            const url = "/api/search/track/artist?artist=" + artist
+            console.log("artist: ", artist)
+
+            fetch(url)
+                .then((response) => {
+                    return response.json();
+                })
+                .then((data) => {
+
+                    if (data.status === 'warning') {
+                        // No results then show a no results found //
+                        console.log("Warning. No results for this Artist search.")
+                        // document.getElementById("error-write").style.display = "flex";
+                        // document.getElementById("success-write").style.display = "none";
+                    }
+                    else {
+                        console.log("Success : Artist Search Results:", data);
+                    }
+                })
+
+        })
+    </script>
+</body>
+
+</html>
