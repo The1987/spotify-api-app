@@ -1,6 +1,6 @@
 # Project
 
-Simple node.js app connecting to Spotify API. Not currently integrated with Shopify.
+Simple node.js app connecting to Spotify API, reading from API, local DB and writing to DB from Spotify. Not currently integrated with Shopify.
 
 ## Setup
 
