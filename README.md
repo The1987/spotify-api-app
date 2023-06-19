@@ -1,6 +1,6 @@
-# Foobar
+# Project
 
-Foobar is a Python library for dealing with word pluralization.
+Simple node.js app connecting to Spotify API. Not currently integrated with Shopify.
 
 ## Setup
 
