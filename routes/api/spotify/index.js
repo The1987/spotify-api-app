@@ -10,25 +10,6 @@ const spotifyClientId = process.env.SPOTIFYCLIENTID;
 const spotifyClientSecret = process.env.SPOTIFYCLIENTSECRET;
 const spotifyAccessToken = process.env.SPOTIFYACCESSTOKEN;
 
-// Handler - Request Access Token //
-
-// curl -X POST "https://accounts.spotify.com/api/token" \
-//      -H "Content-Type: application/x-www-form-urlencoded" \
-//      -d "grant_type=client_credentials&client_id=33b944dd60a945a5a920e59bf7192115&client_secret=99ee733aaa314c2583094a83b6a631b7"
-
-
-// There should be a single endpoint to trigger for the creation of a track, which takes a single value “ISRC”
-// As soon as the call comes in, use the Spotify API to fetch the following metadata:
-// ■ Spotify Image URI
-// ■ Title
-// ■ Artist Name List
-
-// ○ In case the SpotifyAPI returns multiple tracks take the track with highest
-// popularity (an attribute in the Json)
-// ○ Store the ISRC and the additional metadata into the DB
-// ■ No need to care about updating an already existing ISRC, skipping or
-// give back an error is enough.
-
 const authenticateRoute = async (req, res, next) => {
     console.log("Requesting Access Token...");
     const auth_token = Buffer.from(`${spotifyClientId}:${spotifyClientSecret}`, 'utf-8').toString('base64');
